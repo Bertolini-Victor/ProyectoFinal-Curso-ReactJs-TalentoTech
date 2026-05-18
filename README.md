@@ -105,7 +105,8 @@ Para levantar el entorno de desarrollo en tu computadora local, seguí estos pas
     ```
 
 * Abrir el navegador:
+    Es habitualmente provista por Vite y aunque puede variar de puerto suele ser:
 
     ```txt
-    Ingresá a la URL local provista por Vite (habitualmente [http://localhost:5173](http://localhost:5173)).
+    http://localhost:5173.
     ```
