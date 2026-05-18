@@ -28,7 +28,7 @@ function FormularioContainer({ mostrarToast }) {
 		}
 
 		setSubiendo(true);
-		const apiKey = "8d3cac77f36318e509d5ee73cc8494c1";
+		const apiKey = "0cfac6af9dca7ba6502a9b890867f83c";
 		const formData = new FormData();
 		formData.append("image", imagenFile);
 		formData.append("expiration", 86400);
