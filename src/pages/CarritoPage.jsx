@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCarrito } from "../context/CarritoContext";
-import { FiShoppingCart, FiArrowRight, FiLock } from "react-icons/fi";
+import { FiShoppingCart, FiArrowRight, FiLock, FiTag } from "react-icons/fi";
 
 const CarritoPage = () => {
 	const navigate = useNavigate();
-
 	const {
 		carrito,
 		handleRemoveFromCart,
@@ -18,7 +17,31 @@ const CarritoPage = () => {
 
 	const [hoverClear, setHoverClear] = useState(false);
 	const [hoverShop, setHoverShop] = useState(false);
-	const [hoverCheckout, setHoverCheckout] = useState(false);
+
+	// --- NUEVOS ESTADOS PARA EL CUPÓN ---
+	const [cuponInput, setCuponInput] = useState("");
+	const [descuento, setDescuento] = useState(0);
+	const [mensajeCupon, setMensajeCupon] = useState({ texto: "", tipo: "" });
+
+	const aplicarCupon = () => {
+		const codigo = cuponInput.trim().toUpperCase();
+		if (codigo === "REACT20") {
+			setDescuento(0.2); // 20% de descuento
+			setMensajeCupon({
+				texto: "¡Cupón REACT20 aplicado! (20% OFF)",
+				tipo: "success",
+			});
+		} else if (codigo === "TALENTOLAB") {
+			setDescuento(0.15); // 15% de descuento
+			setMensajeCupon({
+				texto: "¡Cupón TALENTOLAB aplicado! (15% OFF)",
+				tipo: "success",
+			});
+		} else {
+			setDescuento(0);
+			setMensajeCupon({ texto: "Cupón inválido o expirado.", tipo: "error" });
+		}
+	};
 
 	if (carrito.length === 0) {
 		return (
@@ -39,11 +62,18 @@ const CarritoPage = () => {
 						background: hoverShop ? "#ef4444" : "#0f172a",
 						transform: hoverShop ? "translateY(-2px)" : "translateY(0)",
 					}}>
-					Ir a la Tienda ➔
+					Ir a la Tienda{" "}
+					<FiArrowRight
+						style={{ marginLeft: "6px", verticalAlign: "middle" }}
+					/>
 				</button>
 			</div>
 		);
 	}
+
+	// Cálculo del precio final con descuento
+	const montoDescuento = precioTotal * descuento;
+	const totalFinal = precioTotal - montoDescuento;
 
 	return (
 		<div style={styles.container}>
@@ -58,11 +88,9 @@ const CarritoPage = () => {
 								alt={item.nombre}
 								style={styles.itemImage}
 								onError={(e) => {
-									e.target.src =
-										"https://images.unsplash.com/photo-1531403009284-440f080d1e12";
+									e.target.src = "/image/placeholder_seguro.jpg";
 								}}
 							/>
-
 							<div style={styles.itemDetails}>
 								<span style={styles.itemCategory}>{item.categoria}</span>
 								<h4 style={styles.itemName}>{item.nombre}</h4>
@@ -70,7 +98,6 @@ const CarritoPage = () => {
 									USD {item.precio.toLocaleString()}
 								</p>
 							</div>
-
 							<div style={styles.quantityControls}>
 								<button
 									style={styles.qtyBtn}
@@ -84,7 +111,6 @@ const CarritoPage = () => {
 									+
 								</button>
 							</div>
-
 							<div style={styles.subtotalBlock}>
 								<p style={styles.itemSubtotal}>
 									USD {(item.precio * item.cantidad).toLocaleString()}
@@ -115,26 +141,74 @@ const CarritoPage = () => {
 				<div style={styles.summaryCard}>
 					<h3 style={styles.summaryTitle}>Resumen de Pedido</h3>
 					<div style={styles.summaryRow}>
-						<span>Productos ({cantidadTotal}):</span>{" "}
-						<span>USD {precioTotal.toLocaleString()}</span>{" "}
+						<span>Productos ({cantidadTotal}):</span>
+						<span>USD {precioTotal.toLocaleString()}</span>
 					</div>
 					<div style={styles.summaryRow}>
 						<span>Envío:</span>
 						<span style={styles.freeText}>¡Gratis!</span>
 					</div>
+
+					{/* --- SECCIÓN CUPÓN --- */}
+					<div style={styles.couponSection}>
+						<div style={styles.couponInputGroup}>
+							<FiTag style={{ color: "#94a3b8", marginLeft: "10px" }} />
+							<input
+								type="text"
+								placeholder="Código de descuento"
+								value={cuponInput}
+								onChange={(e) => setCuponInput(e.target.value)}
+								style={styles.couponInput}
+							/>
+							<button onClick={aplicarCupon} style={styles.couponBtn}>
+								Aplicar
+							</button>
+						</div>
+						{mensajeCupon.texto && (
+							<small
+								style={{
+									color:
+										mensajeCupon.tipo === "success" ? "#16a34a" : "#ef4444",
+									fontWeight: "600",
+									marginTop: "5px",
+									display: "block",
+								}}>
+								{mensajeCupon.texto}
+							</small>
+						)}
+					</div>
+
+					{descuento > 0 && (
+						<div
+							style={{
+								...styles.summaryRow,
+								color: "#16a34a",
+								fontWeight: "bold",
+							}}>
+							<span>Descuento aplicado:</span>
+							<span>- USD {montoDescuento.toLocaleString()}</span>
+						</div>
+					)}
+
 					<hr style={styles.divider} />
 					<div style={styles.totalRow}>
 						<span>Total:</span>
-						<span>USD {precioTotal.toLocaleString()}</span>
+						<span>USD {totalFinal.toLocaleString()}</span>
 					</div>
+
 					<button
-						onClick={() => alert("¡Redireccionando!")}
-						style={{ ...styles.checkoutBtn, background: "#ef4444" }}>
-						Proceder al Pago Final
+						onClick={() => alert("¡Gracias por tu compra en TechStore!")}
+						style={styles.checkoutBtn}>
+						Proceder al Pago Final{" "}
 						<FiArrowRight
-							style={{ marginLeft: "6px", verticalAlign: "middle" }}
+							style={{ marginLeft: "4px", verticalAlign: "middle" }}
 						/>
 					</button>
+
+					<div style={styles.securityNote}>
+						<FiLock style={{ marginRight: "4px", verticalAlign: "middle" }} />{" "}
+						Pago seguro integrado
+					</div>
 				</div>
 			</div>
 		</div>
@@ -228,7 +302,6 @@ const styles = {
 		minWidth: "20px",
 		textAlign: "center",
 	},
-
 	subtotalBlock: {
 		display: "flex",
 		alignItems: "center",
@@ -250,7 +323,6 @@ const styles = {
 		padding: "4px",
 		transition: "transform 0.2s",
 	},
-
 	clearBtn: {
 		alignSelf: "flex-start",
 		border: "1px solid transparent",
@@ -334,6 +406,229 @@ const styles = {
 		fontWeight: "700",
 		cursor: "pointer",
 		transition: "all 0.2s",
+	},
+	container: {
+		maxWidth: "1200px",
+		margin: "40px auto",
+		padding: "0 20px",
+		minHeight: "60vh",
+	},
+	pageTitle: {
+		fontSize: "28px",
+		fontWeight: "800",
+		color: "#0f172a",
+		marginBottom: "30px",
+	},
+	mainLayout: {
+		display: "flex",
+		gap: "30px",
+		alignItems: "flex-start",
+		flexWrap: "wrap",
+	},
+	productsColumn: {
+		flex: "1",
+		minWidth: "320px",
+		display: "flex",
+		flexDirection: "column",
+		gap: "16px",
+	},
+	itemCard: {
+		background: "#ffffff",
+		border: "1px solid #e2e8f0",
+		borderRadius: "12px",
+		padding: "16px",
+		display: "flex",
+		alignItems: "center",
+		gap: "20px",
+		flexWrap: "wrap",
+	},
+	itemImage: {
+		width: "80px",
+		height: "80px",
+		objectFit: "cover",
+		borderRadius: "8px",
+		background: "#f8fafc",
+	},
+	itemDetails: { flex: "1", minWidth: "180px" },
+	itemCategory: {
+		fontSize: "11px",
+		fontWeight: "700",
+		color: "#ef4444",
+		textTransform: "uppercase",
+	},
+	itemName: {
+		fontSize: "16px",
+		fontWeight: "700",
+		color: "#0f172a",
+		margin: "4px 0",
+	},
+	itemPriceUnit: { fontSize: "13px", color: "#64748b", margin: 0 },
+	quantityControls: {
+		display: "flex",
+		alignItems: "center",
+		background: "#f1f5f9",
+		borderRadius: "20px",
+		padding: "4px",
+	},
+	qtyBtn: {
+		background: "#0f172a",
+		color: "#ffffff",
+		border: "none",
+		width: "28px",
+		height: "28px",
+		borderRadius: "50%",
+		cursor: "pointer",
+		fontSize: "16px",
+		fontWeight: "700",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		transition: "background 0.2s",
+	},
+	qtyValue: {
+		padding: "0 14px",
+		fontWeight: "700",
+		fontSize: "14px",
+		color: "#0f172a",
+		minWidth: "20px",
+		textAlign: "center",
+	},
+	subtotalBlock: {
+		display: "flex",
+		alignItems: "center",
+		gap: "20px",
+		marginLeft: "auto",
+	},
+	itemSubtotal: {
+		fontSize: "16px",
+		fontWeight: "800",
+		color: "#0f172a",
+		margin: 0,
+	},
+	deleteBtn: {
+		background: "transparent",
+		border: "none",
+		fontSize: "18px",
+		color: "red",
+		cursor: "pointer",
+		padding: "4px",
+		transition: "transform 0.2s",
+	},
+	clearBtn: {
+		alignSelf: "flex-start",
+		border: "1px solid transparent",
+		padding: "10px 16px",
+		borderRadius: "8px",
+		fontSize: "13px",
+		fontWeight: "600",
+		cursor: "pointer",
+		transition: "all 0.2s",
+	},
+	summaryCard: {
+		width: "350px",
+		background: "#ffffff",
+		border: "1px solid #e2e8f0",
+		borderRadius: "16px",
+		padding: "24px",
+		display: "flex",
+		flexDirection: "column",
+		gap: "16px",
+		boxShadow: "0 4px 6px rgba(0, 0, 0, 0.02)",
+	},
+	summaryTitle: {
+		fontSize: "18px",
+		fontWeight: "700",
+		color: "#0f172a",
+		margin: "0 0 8px 0",
+	},
+	summaryRow: {
+		display: "flex",
+		justifyContent: "space-between",
+		fontSize: "14px",
+		color: "#475569",
+	},
+	freeText: { color: "#22c55e", fontWeight: "700" },
+	divider: { border: "none", borderTop: "1px solid #e2e8f0", margin: "8px 0" },
+	totalRow: {
+		display: "flex",
+		justifyContent: "space-between",
+		fontSize: "18px",
+		fontWeight: "800",
+		color: "#0f172a",
+	},
+	checkoutBtn: {
+		background: "#ef4444",
+		border: "none",
+		padding: "14px",
+		borderRadius: "8px",
+		color: "#ffffff",
+		fontSize: "15px",
+		fontWeight: "700",
+		cursor: "pointer",
+		transition: "all 0.2s ease",
+		textAlign: "center",
+	},
+	securityNote: {
+		fontSize: "11px",
+		color: "#94a3b8",
+		textAlign: "center",
+		marginTop: "4px",
+	},
+	emptyContainer: { textAlign: "center", padding: "80px 20px" },
+	emptyIcon: { fontSize: "64px", marginBottom: "20px", color: "#94a3b8" },
+	emptyTitle: {
+		fontSize: "24px",
+		fontWeight: "800",
+		color: "#0f172a",
+		margin: "0 0 10px 0",
+	},
+	emptyText: {
+		fontSize: "15px",
+		color: "#64748b",
+		marginBottom: "30px",
+		maxWidth: "400px",
+		margin: "0 auto 30px auto",
+	},
+	shopBtn: {
+		color: "#ffffff",
+		border: "none",
+		padding: "12px 36px",
+		borderRadius: "30px",
+		fontSize: "15px",
+		fontWeight: "700",
+		cursor: "pointer",
+		transition: "all 0.2s",
+	},
+	couponSection: {
+		background: "#f8fafc",
+		padding: "12px",
+		borderRadius: "8px",
+		border: "1px dashed #cbd5e1",
+	},
+	couponInputGroup: {
+		display: "flex",
+		alignItems: "center",
+		background: "#fff",
+		border: "1px solid #e2e8f0",
+		borderRadius: "6px",
+		overflow: "hidden",
+	},
+	couponInput: {
+		border: "none",
+		outline: "none",
+		padding: "8px 10px",
+		width: "100%",
+		fontSize: "13px",
+		textTransform: "uppercase",
+	},
+	couponBtn: {
+		background: "#0f172a",
+		color: "#fff",
+		border: "none",
+		padding: "8px 16px",
+		fontSize: "13px",
+		fontWeight: "bold",
+		cursor: "pointer",
 	},
 };
 
