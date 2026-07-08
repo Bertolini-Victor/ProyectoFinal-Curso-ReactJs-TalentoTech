@@ -1,25 +1,34 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCarrito } from "../context/CarritoContext";
+import { FiShoppingCart, FiArrowRight, FiLock } from "react-icons/fi";
 
-const CarritoPage = ({ carrito, onRemove, onDecrease, onClear, onAdd }) => {
+const CarritoPage = () => {
 	const navigate = useNavigate();
+
+	const {
+		carrito,
+		handleRemoveFromCart,
+		handleDecreaseQuantity,
+		handleClearCart,
+		handleAddToCart,
+		precioTotal,
+		cantidadTotal,
+	} = useCarrito();
+
 	const [hoverClear, setHoverClear] = useState(false);
 	const [hoverShop, setHoverShop] = useState(false);
 	const [hoverCheckout, setHoverCheckout] = useState(false);
 
-	const totalCompra = carrito.reduce(
-		(acc, item) => acc + item.precio * item.cantidad,
-		0,
-	);
-
 	if (carrito.length === 0) {
 		return (
 			<div style={styles.emptyContainer}>
-				<div style={styles.emptyIcon}>🛒</div>
+				<div style={styles.emptyIcon}>
+					<FiShoppingCart />
+				</div>
 				<h2 style={styles.emptyTitle}>Tu carrito está vacío</h2>
 				<p style={styles.emptyText}>
-					Parece que todavía no agregaste componentes tecnológicos a tu
-					configuración.
+					Parece que todavía no agregaste componentes a tu configuración.
 				</p>
 				<button
 					onClick={() => navigate("/productos")}
@@ -65,11 +74,13 @@ const CarritoPage = ({ carrito, onRemove, onDecrease, onClear, onAdd }) => {
 							<div style={styles.quantityControls}>
 								<button
 									style={styles.qtyBtn}
-									onClick={() => onDecrease(item.id)}>
+									onClick={() => handleDecreaseQuantity(item.id)}>
 									-
 								</button>
 								<span style={styles.qtyValue}>{item.cantidad}</span>
-								<button style={styles.qtyBtn} onClick={() => onAdd(item, 1)}>
+								<button
+									style={styles.qtyBtn}
+									onClick={() => handleAddToCart(item, 1)}>
 									+
 								</button>
 							</div>
@@ -80,7 +91,7 @@ const CarritoPage = ({ carrito, onRemove, onDecrease, onClear, onAdd }) => {
 								</p>
 								<button
 									style={styles.deleteBtn}
-									onClick={() => onRemove(item.id)}
+									onClick={() => handleRemoveFromCart(item.id)}
 									title="Eliminar del carrito">
 									X
 								</button>
@@ -89,7 +100,7 @@ const CarritoPage = ({ carrito, onRemove, onDecrease, onClear, onAdd }) => {
 					))}
 
 					<button
-						onClick={onClear}
+						onClick={handleClearCart}
 						onMouseEnter={() => setHoverClear(true)}
 						onMouseLeave={() => setHoverClear(false)}
 						style={{
@@ -104,11 +115,8 @@ const CarritoPage = ({ carrito, onRemove, onDecrease, onClear, onAdd }) => {
 				<div style={styles.summaryCard}>
 					<h3 style={styles.summaryTitle}>Resumen de Pedido</h3>
 					<div style={styles.summaryRow}>
-						<span>
-							Productos ({carrito.reduce((acc, item) => acc + item.cantidad, 0)}
-							):
-						</span>
-						<span>USD {totalCompra.toLocaleString()}</span>
+						<span>Productos ({cantidadTotal}):</span>{" "}
+						<span>USD {precioTotal.toLocaleString()}</span>{" "}
 					</div>
 					<div style={styles.summaryRow}>
 						<span>Envío:</span>
@@ -117,31 +125,16 @@ const CarritoPage = ({ carrito, onRemove, onDecrease, onClear, onAdd }) => {
 					<hr style={styles.divider} />
 					<div style={styles.totalRow}>
 						<span>Total:</span>
-						<span>USD {totalCompra.toLocaleString()}</span>
+						<span>USD {precioTotal.toLocaleString()}</span>
 					</div>
-
 					<button
-						onClick={() =>
-							alert(
-								"¡Gracias por tu compra! Redireccionando a la pasarela de pagos simulada.",
-							)
-						}
-						onMouseEnter={() => setHoverCheckout(true)}
-						onMouseLeave={() => setHoverCheckout(false)}
-						style={{
-							...styles.checkoutBtn,
-							background: hoverCheckout ? "#dc2626" : "#ef4444",
-							transform: hoverCheckout ? "translateY(-2px)" : "translateY(0)",
-							boxShadow: hoverCheckout
-								? "0 6px 20px rgba(239, 68, 68, 0.4)"
-								: "none",
-						}}>
-						Proceder al Pago Final ➔
+						onClick={() => alert("¡Redireccionando!")}
+						style={{ ...styles.checkoutBtn, background: "#ef4444" }}>
+						Proceder al Pago Final
+						<FiArrowRight
+							style={{ marginLeft: "6px", verticalAlign: "middle" }}
+						/>
 					</button>
-
-					<span style={styles.securityNote}>
-						🔒 Pago seguro integrado con TechStore
-					</span>
 				</div>
 			</div>
 		</div>

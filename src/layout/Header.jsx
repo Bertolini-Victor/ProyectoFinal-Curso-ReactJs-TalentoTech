@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import NavBar from "./NavBar";
+import { FiZap } from "react-icons/fi";
 
 const Header = ({ cantidadCarrito }) => {
 	return (
@@ -8,7 +9,9 @@ const Header = ({ cantidadCarrito }) => {
 			<div style={styles.container}>
 				<Link to="/" style={styles.logoLink}>
 					<div style={styles.logoBox}>
-						<span style={styles.logoIcon}>⚡</span>
+						<span style={styles.logoIcon}>
+							<FiZap />
+						</span>
 						<h1 style={styles.logoText}>
 							Tech<span style={styles.logoAccent}>Store</span>
 						</h1>

@@ -1,9 +1,10 @@
 import React from "react";
+import { FiCheckCircle, FiZap } from "react-icons/fi";
 
 const ToastNotification = ({ visible, mensaje, tipo = "success" }) => {
 	const config = {
-		success: { bg: "#065f46", border: "#059669", icon: "✅" },
-		admin: { bg: "#1e1b4b", border: "#4f46e5", icon: "⚡" },
+		success: { bg: "#065f46", border: "#059669", icon: <FiCheckCircle /> },
+		admin: { bg: "#1e1b4b", border: "#4f46e5", icon: <FiZap /> },
 	};
 
 	const estilo = config[tipo] || config.success;

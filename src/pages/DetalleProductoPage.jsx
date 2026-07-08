@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ImagenSegura from "../components/ImagenSegura";
+import { useCarrito } from "../context/CarritoContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
+import { FiShoppingCart, FiArrowLeft } from "react-icons/fi";
 
-const DetalleProductoPage = ({ onAddToCart }) => {
+const DetalleProductoPage = ({ mostrarToast }) => {
 	const { id } = useParams();
 	const navigate = useNavigate();
+	const { handleAddToCart } = useCarrito();
+
 	const [producto, setProducto] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [cantidad, setCantidad] = useState(1);
@@ -13,45 +19,52 @@ const DetalleProductoPage = ({ onAddToCart }) => {
 	const [hoverMas, setHoverMas] = useState(false);
 
 	useEffect(() => {
-		fetch("/data/products.json")
-			.then((res) => res.json())
-			.then((data) => {
-				const creadosLocalmente =
-					JSON.parse(localStorage.getItem("nuevosProductosTechStore")) || [];
+		const traerProducto = async () => {
+			try {
+				const docRef = doc(db, "productos", id);
+				const docSnap = await getDoc(docRef);
 
-				const catalogoCompleto = [
-					...creadosLocalmente,
-					...(data.productos || []),
-				];
-
-				const encontrado = catalogoCompleto.find((p) => p.id === id);
-
-				setProducto(encontrado);
+				if (docSnap.exists()) {
+					setProducto({ id: docSnap.id, ...docSnap.data() });
+				} else {
+					console.log("El producto no existe en Firebase");
+				}
+			} catch (error) {
+				console.error("Error al obtener el producto:", error);
+			} finally {
 				setLoading(false);
-			})
-			.catch(() => setLoading(false));
+			}
+		};
+
+		traerProducto();
 	}, [id]);
 
 	if (loading || !producto) {
 		return (
 			<div style={{ textAlign: "center", padding: "80px 20px" }}>
-				<h2 style={{ color: "#0f172a" }}>Producto no encontrado</h2>
+				<h2 style={{ color: "#0f172a" }}>
+					{loading ? "Cargando..." : "Producto no encontrado"}
+				</h2>
 				<p style={{ color: "#64748b", marginBottom: "20px" }}>
-					El componente que buscás no existe o fue eliminado.
+					{loading
+						? "Conectando con la base de datos..."
+						: "El componente que buscás no existe o fue eliminado."}
 				</p>
-				<button
-					onClick={() => navigate("/productos")}
-					style={{
-						background: "#ef4444",
-						color: "#fff",
-						border: "none",
-						padding: "10px 20px",
-						borderRadius: "8px",
-						cursor: "pointer",
-						fontWeight: "bold",
-					}}>
-					Volver al Catálogo
-				</button>
+				{!loading && (
+					<button
+						onClick={() => navigate("/productos")}
+						style={{
+							background: "#ef4444",
+							color: "#fff",
+							border: "none",
+							padding: "10px 20px",
+							borderRadius: "8px",
+							cursor: "pointer",
+							fontWeight: "bold",
+						}}>
+						Volver al Catálogo
+					</button>
+				)}
 			</div>
 		);
 	}
@@ -59,12 +72,21 @@ const DetalleProductoPage = ({ onAddToCart }) => {
 	const incrementar = () =>
 		cantidad < producto.stock && setCantidad(cantidad + 1);
 	const decrementar = () => cantidad > 1 && setCantidad(cantidad - 1);
-	const handleComprar = () => onAddToCart(producto, cantidad);
+
+	const handleComprar = () => {
+		handleAddToCart(producto, cantidad);
+		if (mostrarToast)
+			mostrarToast(
+				`¡"${producto.nombre}" (${cantidad} u.) añadido al carrito!`,
+				"success",
+			);
+	};
 
 	return (
 		<div style={styles.container}>
 			<button style={styles.backBtn} onClick={() => navigate(-1)}>
-				⇠ Volver atrás
+				<FiArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
+				Volver atrás
 			</button>
 
 			<div style={styles.grid}>
@@ -113,7 +135,10 @@ const DetalleProductoPage = ({ onAddToCart }) => {
 							</div>
 
 							<button onClick={handleComprar} style={styles.buyBtn}>
-								🛒 Añadir {cantidad} al Carrito
+								<FiShoppingCart
+									style={{ marginRight: "6px", verticalAlign: "middle" }}
+								/>
+								Añadir {cantidad} al Carrito
 							</button>
 						</div>
 					</div>

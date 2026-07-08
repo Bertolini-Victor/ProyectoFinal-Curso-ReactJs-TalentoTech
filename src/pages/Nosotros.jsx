@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import { Helmet } from "react-helmet";
+import { FiMail } from "react-icons/fi";
 import { companerosData } from "../data/teamData";
 
 const TarjetaEmpleado = ({ persona }) => {
@@ -23,8 +26,10 @@ const TarjetaEmpleado = ({ persona }) => {
 			<h3 style={styles.name}>{persona.nombre}</h3>
 			<span style={styles.role}>{persona.puesto}</span>
 			<p style={styles.desc}>{persona.descripcion}</p>
+
 			<a href={`mailto:${persona.email}`} style={styles.emailLink}>
-				✉️ {persona.email}
+				<FiMail style={{ marginRight: "6px", verticalAlign: "middle" }} />
+				{persona.email}
 			</a>
 		</div>
 	);
@@ -32,32 +37,40 @@ const TarjetaEmpleado = ({ persona }) => {
 
 const Nosotros = () => {
 	return (
-		<div style={styles.container}>
+		<Container style={styles.container}>
+			<Helmet>
+				<title>TechStore | Nuestro Equipo</title>
+				<meta
+					name="description"
+					content="Conocé al equipo de Talento Lab detrás de TechStore."
+				/>
+			</Helmet>
+
 			<div style={styles.introBox}>
 				<span style={styles.subtitle}>CONOCÉ AL EQUIPO</span>
 				<h2 style={styles.title}>Nuestra Misión Tech</h2>
 				<p style={styles.text}>
-					Somos un grupo multidisciplinario de estudiantes avanzados del
-					programa Talento Lab. Nos unimos para diseñar y codificar una
-					plataforma e-commerce de alto rendimiento utilizando React JS y las
-					mejores prácticas de arquitectura moderna.
+					Somos un grupo multidisciplinario del programa Talento Lab. Nos unimos
+					para diseñar y codificar una plataforma e-commerce de alto rendimiento
+					utilizando React JS y las mejores prácticas de arquitectura moderna.
 				</p>
 			</div>
 
-			<div style={styles.grid}>
+			<Row className="g-4">
 				{companerosData.map((persona) => (
-					<TarjetaEmpleado key={persona.id} persona={persona} />
+					<Col key={persona.id} xs={12} md={6} lg={4} xl={3}>
+						<TarjetaEmpleado persona={persona} />
+					</Col>
 				))}
-			</div>
-		</div>
+			</Row>
+		</Container>
 	);
 };
 
 const styles = {
 	container: {
-		maxWidth: "1200px",
-		margin: "40px auto",
-		padding: "0 20px",
+		paddingTop: "40px",
+		paddingBottom: "40px",
 	},
 	introBox: {
 		textAlign: "center",
@@ -83,12 +96,6 @@ const styles = {
 		lineHeight: "1.6",
 		margin: 0,
 	},
-	grid: {
-		display: "grid",
-		gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-		gap: "30px",
-		marginTop: "20px",
-	},
 	card: {
 		background: "#ffffff",
 		border: "1px solid #e2e8f0",
@@ -99,6 +106,7 @@ const styles = {
 		alignItems: "center",
 		textAlign: "center",
 		transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+		height: "100%",
 	},
 	avatarContainer: {
 		position: "relative",
@@ -153,8 +161,9 @@ const styles = {
 		padding: "6px 12px",
 		borderRadius: "6px",
 		border: "1px solid #e2e8f0",
-		width: "90%",
+		width: "100%",
 		boxSizing: "border-box",
+		display: "inline-block",
 	},
 };
 

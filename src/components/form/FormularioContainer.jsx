@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import FormularioProducto from "./FormularioProducto";
+import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../config/firebase";
 
 const estadoInicial = {
 	nombre: "",
@@ -10,71 +13,91 @@ const estadoInicial = {
 };
 
 function FormularioContainer({ mostrarToast }) {
+	const { id } = useParams();
+	const navigate = useNavigate();
+
 	const [datosForm, setDatosForm] = useState(estadoInicial);
 	const [imagenFile, setImagenFile] = useState(null);
+	const [imagenPrevia, setImagenPrevia] = useState("");
 	const [subiendo, setSubiendo] = useState(false);
 
-	const manejarCambio = (evento) =>
-		setDatosForm({ ...datosForm, [evento.target.name]: evento.target.value });
-	const manejarCambioImagen = (evento) => {
-		if (evento.target.files[0]) setImagenFile(evento.target.files[0]);
+	useEffect(() => {
+		if (id) {
+			const traerProducto = async () => {
+				const docRef = doc(db, "productos", id);
+				const docSnap = await getDoc(docRef);
+				if (docSnap.exists()) {
+					const data = docSnap.data();
+					setDatosForm(data);
+					if (data.imagenes) setImagenPrevia(data.imagenes[0]);
+				}
+			};
+			traerProducto();
+		}
+	}, [id]);
+
+	const manejarCambio = (e) =>
+		setDatosForm({ ...datosForm, [e.target.name]: e.target.value });
+	const manejarCambioImagen = (e) => {
+		if (e.target.files[0]) setImagenFile(e.target.files[0]);
 	};
 
-	const manejarEnvio = async (evento) => {
-		evento.preventDefault();
-		if (!imagenFile) {
-			mostrarToast("Falta seleccionar una imagen", "admin");
+	const manejarEnvio = async (e) => {
+		e.preventDefault();
+
+		if (!id && !imagenFile) {
+			if (mostrarToast) mostrarToast("Falta seleccionar una imagen", "admin");
 			return;
 		}
 
 		setSubiendo(true);
-		const apiKey = "0cfac6af9dca7ba6502a9b890867f83c";
-		const formData = new FormData();
-		formData.append("image", imagenFile);
-		formData.append("expiration", 86400);
-
 		try {
-			const respuestaImgbb = await fetch(
-				`https://api.imgbb.com/1/upload?key=${apiKey}`,
-				{
-					method: "POST",
-					body: formData,
-				},
-			);
-			const datosImgbb = await respuestaImgbb.json();
+			let urlImagenFinal = imagenPrevia;
+			if (imagenFile) {
+				const apiKey = "0cfac6af9dca7ba6502a9b890867f83c";
+				const formData = new FormData();
+				formData.append("image", imagenFile);
+				formData.append("expiration", 86400);
 
-			if (datosImgbb.success) {
-				const productoNuevo = {
-					id: "PROD-NEW-" + Math.floor(Math.random() * 10000),
-					nombre: datosForm.nombre,
-					categoria: datosForm.categoria,
-					precio: parseFloat(datosForm.precio),
-					stock: parseInt(datosForm.stock),
-					descripcion_corta: datosForm.descripcion_corta,
-					imagenes: [datosImgbb.data.url],
-				};
-
-				const productosGuardados =
-					JSON.parse(localStorage.getItem("nuevosProductosTechStore")) || [];
-				productosGuardados.unshift(productoNuevo);
-				localStorage.setItem(
-					"nuevosProductosTechStore",
-					JSON.stringify(productosGuardados),
+				const resImgbb = await fetch(
+					`https://api.imgbb.com/1/upload?key=${apiKey}`,
+					{ method: "POST", body: formData },
 				);
+				const datosImgbb = await resImgbb.json();
 
-				mostrarToast(
-					`¡Producto "${productoNuevo.nombre}" publicado con éxito!`,
-					"admin",
-				);
+				if (datosImgbb.success) {
+					urlImagenFinal = datosImgbb.data.url;
+				} else throw new Error("Falló la subida");
+			}
 
+			const productoFinal = {
+				nombre: datosForm.nombre,
+				categoria: datosForm.categoria,
+				precio: parseFloat(datosForm.precio),
+				stock: parseInt(datosForm.stock),
+				descripcion_corta: datosForm.descripcion_corta,
+				imagenes: [urlImagenFinal],
+			};
+
+			if (id) {
+				const docRef = doc(db, "productos", id);
+				await updateDoc(docRef, productoFinal);
+				if (mostrarToast)
+					mostrarToast(`¡"${productoFinal.nombre}" actualizado!`, "admin");
+				navigate("/admin");
+			} else {
+				const productosRef = collection(db, "productos");
+				await addDoc(productosRef, productoFinal);
+				if (mostrarToast)
+					mostrarToast(`¡"${productoFinal.nombre}" creado con éxito!`, "admin");
 				setDatosForm(estadoInicial);
 				setImagenFile(null);
-				evento.target.reset();
-			} else {
-				throw new Error("Falló la subida");
+				e.target.reset();
 			}
 		} catch (error) {
-			mostrarToast("Error al procesar el formulario.", "admin");
+			console.error(error);
+			if (mostrarToast)
+				mostrarToast("Error al guardar en la base de datos.", "admin");
 		} finally {
 			setSubiendo(false);
 		}
@@ -87,6 +110,7 @@ function FormularioContainer({ mostrarToast }) {
 			manejarEnvio={manejarEnvio}
 			manejarCambioImagen={manejarCambioImagen}
 			subiendo={subiendo}
+			esEdicion={!!id}
 		/>
 	);
 }

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ItemListContainer from "../components/ItemListContainer";
+import { FiArrowRight } from "react-icons/fi";
+import { Helmet } from "react-helmet";
 
 const Home = ({ onAddToCart }) => {
 	const navigate = useNavigate();
@@ -10,6 +12,13 @@ const Home = ({ onAddToCart }) => {
 
 	return (
 		<div style={styles.page}>
+			<Helmet>
+				<title>TechStore | Inicio</title>
+				<meta
+					name="description"
+					content="La mejor tienda de componentes y hardware premium."
+				/>
+			</Helmet>
 			<div style={styles.heroBanner}>
 				<div style={styles.heroContent}>
 					<span style={styles.heroTag}>TECNOLOGÍA DE VANGUARDIA</span>
@@ -26,7 +35,7 @@ const Home = ({ onAddToCart }) => {
 							onMouseLeave={() => setHoverBtnPrincipal(false)}
 							style={{
 								...styles.primaryBtn,
-								background: hoverBtnPrincipal ? "#dc2626" : "#ef4444", 
+								background: hoverBtnPrincipal ? "#dc2626" : "#ef4444",
 								transform: hoverBtnPrincipal
 									? "translateY(-2px)"
 									: "translateY(0)",
@@ -34,7 +43,10 @@ const Home = ({ onAddToCart }) => {
 									? "0 6px 20px rgba(239, 68, 68, 0.4)"
 									: "0 4px 15px rgba(239, 68, 68, 0.3)",
 							}}>
-							Explorar Catálogo Completo ➔
+							Explorar Catálogo Completo{" "}
+							<FiArrowRight
+								style={{ marginLeft: "6px", verticalAlign: "middle" }}
+							/>
 						</button>
 
 						<button
@@ -80,7 +92,10 @@ const Home = ({ onAddToCart }) => {
 								? "0 4px 12px rgba(239, 68, 68, 0.3)"
 								: "none",
 						}}>
-						Ver Más Productos Tecnológicos ➔
+						Ver Más Productos Tecnológicos{" "}
+						<FiArrowRight
+							style={{ marginLeft: "6px", verticalAlign: "middle" }}
+						/>
 					</button>
 				</div>
 			</div>

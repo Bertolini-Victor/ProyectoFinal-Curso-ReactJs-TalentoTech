@@ -1,11 +1,10 @@
 import React from "react";
 
-const IMAGEN_DEFAULT = "image/placeholder_seguro.jpg";
+const IMAGEN_DEFAULT = "/image/placeholder_seguro.jpg"; 
 
 const ImagenSegura = ({ src, alt, style }) => {
 	const handleImgError = (e) => {
 		e.target.src = IMAGEN_DEFAULT;
-
 		e.target.onerror = null;
 	};
 
@@ -14,7 +13,7 @@ const ImagenSegura = ({ src, alt, style }) => {
 			src={src}
 			alt={alt}
 			style={style}
-			onError={handleImgError} //
+			onError={handleImgError}
 		/>
 	);
 };
