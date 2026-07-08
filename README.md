@@ -4,10 +4,7 @@
 
 ## 🔐 Acceso para Evaluación (Profesor)
 
-Para poder evaluar los requerimientos de Rutas Protegidas, Autenticación y el CRUD de Productos, por favor utiliza las siguientes credenciales de administrador en la sección "Iniciar Sesión":
-
-- **Email:** admin@techstore.com
-- **Contraseña:** admin1234
+Para poder evaluar los requerimientos de Rutas Protegidas, Autenticación y el CRUD de Productos, por favor utiliza las credenciales de administrador en la sección "Iniciar Sesión"
 
 > **Nota:** Estas credenciales dan acceso al Panel de Administración protegido para crear, editar y eliminar productos directamente en la base de datos de Firebase.
 
