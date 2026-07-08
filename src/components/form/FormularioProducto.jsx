@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FiZap, FiEdit, FiSave, FiLoader, FiArrowRight } from "react-icons/fi";
 
 const FormularioProducto = ({
 	datosForm,
@@ -6,6 +7,7 @@ const FormularioProducto = ({
 	manejarCambioImagen,
 	manejarEnvio,
 	subiendo,
+	esEdicion,
 }) => {
 	const [isButtonHovered, setIsButtonHovered] = useState(false);
 
@@ -13,12 +15,16 @@ const FormularioProducto = ({
 		<div style={styles.pageWrapper}>
 			<form style={styles.form} onSubmit={manejarEnvio}>
 				<div style={styles.header}>
-					<span style={styles.icon}>⚡</span>
-					<h3 style={styles.title}>Nuevo Componente Tecnológico</h3>
+					<span style={styles.icon}>{esEdicion ? <FiEdit /> : <FiZap />}</span>
+					<h3 style={styles.title}>
+						{esEdicion ? "Editar Componente" : "Nuevo Componente Tecnológico"}
+					</h3>
 				</div>
 
 				<p style={styles.subtitle}>
-					Completá las especificaciones para sumar stock al catálogo real.
+					{esEdicion
+						? "Modificá los valores actuales del producto."
+						: "Completá las especificaciones para sumar stock al catálogo real."}
 				</p>
 
 				<div style={styles.inputGroup}>
@@ -96,8 +102,13 @@ const FormularioProducto = ({
 						type="file"
 						accept="image/*"
 						onChange={manejarCambioImagen}
-						required={!subiendo}
+						required={!esEdicion && !subiendo} // No exigimos subir imagen si estamos editando
 					/>
+					{esEdicion && (
+						<small style={{ color: "#64748b", marginTop: "4px" }}>
+							Dejá vacío para mantener la imagen actual.
+						</small>
+					)}
 				</div>
 
 				<button
@@ -121,9 +132,30 @@ const FormularioProducto = ({
 								: "0 4px 10px rgba(239, 68, 68, 0.2)",
 					}}
 					disabled={subiendo}>
-					{subiendo
-						? "⏳ Subiendo imagen y guardando..."
-						: "💾 Guardar Producto en Catálogo ➔"}
+					{subiendo ? (
+						<>
+							<FiLoader
+								style={{ marginRight: "6px", verticalAlign: "middle" }}
+							/>{" "}
+							Guardando...
+						</>
+					) : esEdicion ? (
+						<>
+							<FiSave style={{ marginRight: "6px", verticalAlign: "middle" }} />{" "}
+							Actualizar Producto{" "}
+							<FiArrowRight
+								style={{ marginLeft: "6px", verticalAlign: "middle" }}
+							/>
+						</>
+					) : (
+						<>
+							<FiSave style={{ marginRight: "6px", verticalAlign: "middle" }} />{" "}
+							Guardar en Catálogo{" "}
+							<FiArrowRight
+								style={{ marginLeft: "6px", verticalAlign: "middle" }}
+							/>
+						</>
+					)}
 				</button>
 			</form>
 		</div>

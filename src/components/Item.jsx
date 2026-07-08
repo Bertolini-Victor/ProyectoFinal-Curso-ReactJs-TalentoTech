@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ImagenSegura from "./ImagenSegura";
+import { useCarrito } from "../context/CarritoContext";
+import { FiShoppingCart } from "react-icons/fi";
 
 const Item = ({
 	id,
@@ -10,13 +12,14 @@ const Item = ({
 	descripcion_corta,
 	imagenes,
 	stock,
-	onAddToCart,
+	mostrarToast,
 }) => {
 	const navigate = useNavigate();
 	const [isHovered, setIsHovered] = useState(false);
 	const [cantidad, setCantidad] = useState(1);
 	const [hoverMenos, setHoverMenos] = useState(false);
 	const [hoverMas, setHoverMas] = useState(false);
+	const { handleAddToCart } = useCarrito();
 
 	const incrementar = (e) => {
 		e.stopPropagation();
@@ -30,7 +33,12 @@ const Item = ({
 
 	const handleAgregarClick = (e) => {
 		e.stopPropagation();
-		onAddToCart({ id, nombre, precio, imagenes }, cantidad);
+		handleAddToCart({ id, nombre, precio, imagenes }, cantidad);
+		if (mostrarToast)
+			mostrarToast(
+				`¡"${nombre}" (${cantidad} u.) añadido al carrito!`,
+				"success",
+			);
 		setCantidad(1);
 	};
 
@@ -100,7 +108,10 @@ const Item = ({
 						</div>
 
 						<button style={styles.button} onClick={handleAgregarClick}>
-							🛒 Añadir ({cantidad})
+							<FiShoppingCart
+								style={{ marginRight: "6px", verticalAlign: "middle" }}
+							/>
+							Añadir ({cantidad})
 						</button>
 					</div>
 				) : (

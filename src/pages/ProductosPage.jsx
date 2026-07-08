@@ -1,7 +1,7 @@
 import React from "react";
 import ItemListContainer from "../components/ItemListContainer";
 
-const ProductosPage = ({ onAddToCart }) => {
+const ProductosPage = ({ mostrarToast }) => {
 	return (
 		<div style={styles.container}>
 			<div style={styles.headerBox}>
@@ -24,8 +24,10 @@ const ProductosPage = ({ onAddToCart }) => {
 			<div style={styles.listWrapper}>
 				<ItemListContainer
 					saludo="Todos los Productos en Stock"
-					onAddToCart={onAddToCart}
-					limite={11}
+					mostrarToast={mostrarToast}
+					limite={8}
+					esPaginado={true}
+					mostrarBuscador={true} 
 				/>
 			</div>
 		</div>
@@ -33,11 +35,7 @@ const ProductosPage = ({ onAddToCart }) => {
 };
 
 const styles = {
-	container: {
-		maxWidth: "1200px",
-		margin: "30px auto",
-		padding: "0 20px",
-	},
+	container: { maxWidth: "1200px", margin: "30px auto", padding: "0 20px" },
 	headerBox: {
 		background: "#f8fafc",
 		borderLeft: "4px solid #ef4444",
@@ -49,11 +47,7 @@ const styles = {
 		flexWrap: "wrap",
 		gap: "20px",
 	},
-	textData: {
-		display: "flex",
-		flexDirection: "column",
-		gap: "6px",
-	},
+	textData: { display: "flex", flexDirection: "column", gap: "6px" },
 	tag: {
 		fontSize: "11px",
 		fontWeight: "800",
@@ -66,11 +60,7 @@ const styles = {
 		color: "#0f172a",
 		margin: 0,
 	},
-	subtitle: {
-		fontSize: "14px",
-		color: "#64748b",
-		margin: 0,
-	},
+	subtitle: { fontSize: "14px", color: "#64748b", margin: 0 },
 	badgeCount: {
 		background: "#0f172a",
 		color: "#ffffff",
@@ -82,11 +72,7 @@ const styles = {
 		justifyContent: "center",
 		minWidth: "80px",
 	},
-	badgeNum: {
-		fontSize: "18px",
-		fontWeight: "800",
-		color: "#ef4444",
-	},
+	badgeNum: { fontSize: "18px", fontWeight: "800", color: "#ef4444" },
 	badgeLabel: {
 		fontSize: "10px",
 		textTransform: "uppercase",
@@ -94,14 +80,8 @@ const styles = {
 		fontWeight: "600",
 		letterSpacing: "0.5px",
 	},
-	divider: {
-		border: 0,
-		borderTop: "1px solid #e2e8f0",
-		margin: "30px 0",
-	},
-	listWrapper: {
-		marginTop: "10px",
-	},
+	divider: { border: 0, borderTop: "1px solid #e2e8f0", margin: "30px 0" },
+	listWrapper: { marginTop: "10px" },
 };
 
 export default ProductosPage;
