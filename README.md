@@ -94,25 +94,5 @@ Para levantar el entorno de desarrollo en tu computadora local, seguí estos pas
    ```bash
    npm run dev
    ```
-
-<<<<<<< Updated upstream
-    ```bash
-    npm install
-    ```
-
-* Iniciar el servidor local en modo de desarrollo:
-
-    ```bash
-    npm run dev
-    ```
-
-* Abrir el navegador:
-    Es habitualmente provista por Vite y aunque puede variar de puerto suele ser:
-
-    ```txt
-    http://localhost:5173.
-    ```
-=======
 6. **Abrir el navegador:**
    Ingresá a la URL local provista por Vite (habitualmente `http://localhost:5173`).
->>>>>>> Stashed changes
