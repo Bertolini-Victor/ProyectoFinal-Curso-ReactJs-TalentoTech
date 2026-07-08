@@ -1,99 +1,101 @@
 # ⚡ TechStore - Plataforma E-Commerce Premium
 
-¡Bienvenido a TechStore! Un e-commerce de vanguardia enfocado en hardware premium, componentes de alta gama y dispositivos tecnológicos de última generación. Este proyecto fue diseñado y codificado de forma modular utilizando React JS y Vite, siguiendo las mejores prácticas de arquitectura moderna de componentes bajo el programa Talento Lab.
+¡Bienvenido a TechStore! Un e-commerce de vanguardia enfocado en hardware premium, componentes de alta gama y dispositivos tecnológicos de última generación. Este proyecto fue diseñado de forma modular utilizando React JS y Vite, y representa la entrega final del programa Talento Lab.
+
+## 🔐 Acceso para Evaluación (Profesor)
+
+Para poder evaluar los requerimientos de Rutas Protegidas, Autenticación y el CRUD de Productos, por favor utiliza las siguientes credenciales de administrador en la sección "Iniciar Sesión":
+
+- **Email:** admin@techstore.com
+- **Contraseña:** admin1234
+
+> **Nota:** Estas credenciales dan acceso al Panel de Administración protegido para crear, editar y eliminar productos directamente en la base de datos de Firebase.
 
 ## 🚀 Características Clave del Proyecto
 
-La aplicación ha sido desarrollada evolutivamente, implementando soluciones robustas y de alto rendimiento técnico sin depender de librerías externas pesadas:
+La aplicación ha sido desarrollada escalando desde un entorno local hacia una arquitectura robusta basada en la nube:
 
-### 📦 1. Sincronización Global y Gestión de Estado (Elevación de Estado)
+### 📦 1. Gestión Global con Context API y Autenticación
 
-Carrito Inteligente: El estado global centralizado en App.jsx controla el flujo de la orden, calcula subtotales monetarios reales y totales de unidades en tiempo real.
+- **CarritoContext:** Manejo del estado global del carrito. Permite sumar, restar, eliminar ítems y vaciar el carrito completo, calculando subtotales y cantidades en tiempo real.
+- **AuthContext:** Gestión global de la sesión del usuario conectada a Firebase Authentication.
+- **Rutas Privadas:** Implementación de un componente guardián (`RutaProtegida`) que expulsa a usuarios no autorizados que intenten acceder a las URL de administración.
 
-Control de Duplicados: Evita la duplicación de ítems en el array; si un producto ya existe, incrementa dinámicamente su cantidad.
+### ☁️ 2. Base de Datos en la Nube y CRUD (Firebase Firestore)
 
-Persistencia Local (localStorage): El carrito cuenta con memoria persistente. Si el usuario recarga la página (F5) o cierra la pestaña, los productos se mantienen intactos.
+- **Gestión 100% Cloud:** El catálogo migró de un archivo JSON estático a una base de datos NoSQL en tiempo real (Firestore).
+- **Panel de Administración:** Una tabla de control exclusiva para el administrador con opciones para Editar y Eliminar (con modal de confirmación de seguridad).
+- **Formulario Inteligente:** Un mismo componente recicla su lógica para Crear nuevos productos o Actualizar existentes, integrando la API de Imgbb para el alojamiento físico de las imágenes.
 
-Controles Avanzados: Permite aumentar, disminuir unidades individuales (estilo píldora) o remover líneas completas directamente desde la vista de /carrito.
+### 🎨 3. Arquitectura de Estilos Híbrida y SEO
 
-### 🧭 2. Enrutamiento Dinámico y UX Fluida
+- **Styled-Components:** Diseño de un Sidebar (barra lateral) moderno en modo oscuro para el layout principal, aislando los estilos a nivel de componente.
+- **React Bootstrap:** Implementación del sistema de grillas (`Row`, `Col`, `Card`) para garantizar la responsividad en la sección "Nosotros".
+- **React Icons:** Iconografía unificada, profesional y escalable basada en la librería Feather y FontAwesome.
+- **React Helmet:** Inyección dinámica de etiquetas `<title>` y `<meta>` en el `<head>` del documento para optimizar el posicionamiento (SEO) según la página navegada.
 
-SPA Avanzada: Navegación instantánea mediante react-router-dom con rutas públicas y de administración (/, /productos, /nosotros, /carrito, /producto/:id, /admin/nuevo).
+### ⚙️ 4. UX Avanzada: Búsqueda, Paginación y Descuentos
 
-ScrollToTop Automático: Incorpora un componente centinela que escucha los cambios de ubicación (useLocation) y fuerza al navegador a posicionarse arriba de todo al cambiar de pantalla, eliminando el arrastre de scroll de las SPAs.
-
-Logo Interactivo: El branding superior actúa como un enlace dinámico directo a la Home.
-
-### ⚡ 3. Panel de Administración y Formulario Autónomo
-
-Patrón Contenedor/Presentacional: Separación estricta de responsabilidades entre la lógica de datos (FormularioContainer) y el renderizado estético (FormularioProducto).
-
-Integración con API Externa (Imgbb): Permite subir imágenes binarias locales físicas en tiempo real desde el dispositivo, transformándolas en enlaces URL públicos en la nube.
-
-Catálogo Unificado en Caliente: Los productos nuevos creados por formulario se insertan mediante un embudo inteligente al principio de la grilla principal, persistiendo en la sesión mediante almacenamiento local y permitiendo ver sus detalles individuales inmediatamente.
-
-### 🎨 4. Interfaz Visual e Identidad Estética Premium
-
-Diseño Minimalista Coherente: Paleta industrial unificada que juega con contrastes claros, grises de soporte, negro azulado profundo (#0f172a) y acentos en rojo vibrante (#ef4444).
-
-Micro-interacciones Nativas: Efectos de hover dinámicos y animaciones de elevación en tarjetas y botones controlados mediante estados de React (onMouseEnter / onMouseLeave).
-
-Toast Notification Reutilizable: Reemplazo total de los alert() del navegador por un componente de notificación emergente tipo Toast flotante con lógica de colores asincrónica según la acción (verde para carrito, azul oscuro para administración).
-
-Robustez Visual (ImagenSegura): Manejo de errores de carga de imágenes de servidores externos mediante fallbacks automatizados para evitar enlaces rotos.
+- **Buscador en Tiempo Real:** Filtrado dinámico por nombre o categoría que actualiza el catálogo instantáneamente.
+- **Paginación Matemática:** División automática del array de productos traídos de Firebase para no sobrecargar la vista, adaptándose a los resultados de búsqueda.
+- **Motor de Cupones:** Sistema de descuentos en el checkout. (Podés probar los códigos `REACT20` o `TALENTOLAB` en el carrito).
 
 ## 🛠️ Tecnologías Utilizadas
 
-* React JS (v18+)
-
-* Vite (Herramienta de compilación ultra rápida)
-
-* React Router Dom (Gestión de ruteo declarativo)
-
-* JavaScript Moderno (ES6+)
-
-* HTML5 & CSS3 (Estilos modulares mediante objetos JS in-line)
-
-* Imgbb API (Alojamiento y procesamiento de imágenes)
+- React JS (v18+)
+- Vite (Build tool ultra rápido)
+- Firebase (Authentication & Firestore Database)
+- React Router Dom (Enrutamiento dinámico SPA)
+- Context API (Gestión de estados globales)
+- Styled-Components (CSS-in-JS)
+- React Bootstrap (UI Framework)
+- React Icons (Iconografía SVG)
+- React Helmet (Inyección de metadatos SEO)
+- Imgbb API (Alojamiento y procesamiento de imágenes)
 
 ## 📂 Estructura del Repositorio
 
-```txt
+```text
 src/
-├── assets/          # Imágenes estáticas y formatos de alta eficiencia (.avif, .png)
-├── components/      # Componentes de UI modulares y reutilizables
-│   ├── form/        # Módulos del Formulario (Container + Producto)
-│   ├── Item.jsx     # Tarjeta individual con contador integrado
-│   ├── ItemList.jsx # Grilla adaptativa de productos
-│   ├── ScrollToTop.jsx # Centinela de posición de pantalla
-│   └── ToastNotification.jsx # Componente global de alertas UX
-├── data/            # Archivos de datos estáticos locales (teamData.js)
-├── layout/          # Componentes estructurales (Header, NavBar, Footer, Layout)
-├── pages/           # Vistas de páginas completas asociadas al ruteo
-└── App.jsx          # Raíz de la aplicación, enrutador y lógica de estado global
-public/
-└── data/
-    └── products.json # Base de datos local simulada del catálogo técnico
+├── assets/       # Imágenes estáticas y formatos de alta eficiencia
+├── components/   # Componentes de UI modulares (Item, ItemList, Modales)
+│   └── form/     # Lógica y renderizado del Formulario de Productos
+├── config/       # Archivo de inicialización y conexión con Firebase
+├── context/      # Estados globales (AuthContext.jsx, CarritoContext.jsx)
+├── data/         # Archivos de datos estáticos locales (teamData.js)
+├── layout/       # Layout principal, NavBar lateral
+├── pages/        # Vistas asociadas al ruteo (Home, Admin, Carrito, etc.)
+└── App.jsx       # Raíz de la aplicación y enrutador principal
 ```
 
 ## ⚙️ Instalación y Ejecución Local
 
-Para levantar el entorno de desarrollo en tu computadora local, seguí estos pasos sencillos:
+Para levantar el entorno de desarrollo en tu computadora local, seguí estos pasos:
 
-* Clonar el repositorio:
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/Bertolini-Victor/ProyectoFinalCurso-ReactJs-TalentoTech.git
+   ```
 
-    ```bash
-    git clone https://github.com/Bertolini-Victor/ProyectoFinal-Curso-ReactJs-TalentoTech.git
-    ```
+2. **Ingresar a la carpeta del proyecto:**
+   ```bash
+   cd ProyectoFinal-Curso-ReactJs-TalentoTech
+   ```
 
-* Ingresar a la carpeta del proyecto:
+3. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
 
-    ```bash
-    cd ProyectoFinal-Curso-ReactJs-TalentoTech
-    ```
+4. **Variables de Entorno (Opcional):**
+   Asegurate de configurar tu propio archivo `firebase.js` en `src/config` con las credenciales de tu consola de Google Firebase si deseás usar tu propia base de datos.
 
-* Instalar dependencias:
+5. **Iniciar el servidor local en modo de desarrollo:**
+   ```bash
+   npm run dev
+   ```
 
+<<<<<<< Updated upstream
     ```bash
     npm install
     ```
@@ -110,3 +112,7 @@ Para levantar el entorno de desarrollo en tu computadora local, seguí estos pas
     ```txt
     http://localhost:5173.
     ```
+=======
+6. **Abrir el navegador:**
+   Ingresá a la URL local provista por Vite (habitualmente `http://localhost:5173`).
+>>>>>>> Stashed changes
